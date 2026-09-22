@@ -10,6 +10,13 @@
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
-# Scroll-scrubbed videos and posters: long cache, revalidate weekly.
-/videos/*
+# Scroll-scrubbed videos: no Cache-Control override here on purpose.
+# Cloudflare's static-asset serving varies its default Cache-Control based on
+# whether the request carries a Range header; overriding it with a single
+# static value here made the edge cache store these as whole objects, which
+# then ignored Range requests entirely and broke <video> seeking (Chrome
+# reports video.seekable=[[0,0]] once a resource is served without honoring
+# Range). Posters are plain images with no seeking need, so they keep a
+# normal long cache.
+/videos/*.jpg
   Cache-Control: public, max-age=604800, stale-while-revalidate=86400
