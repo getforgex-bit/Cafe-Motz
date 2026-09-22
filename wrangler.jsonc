@@ -1,0 +1,15 @@
+// Cloudflare Workers (static assets). The site is a pure SPA built by Vite into ./dist:
+// no server code, so this Worker only serves assets. Deploy with `npm run deploy`.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "motz-cafe",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./dist",
+    // Unknown paths fall back to index.html (single-page app, hash-based anchors only).
+    "not_found_handling": "single-page-application"
+  },
+  "observability": {
+    "enabled": true
+  }
+}

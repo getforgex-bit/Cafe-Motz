@@ -1,0 +1,6 @@
+{
+  "name": "MOTZ CAFÉ",
+  "description": "Experiencia narrativa y carta artesanal de MOTZ CAFÉ en Motozintla de Mendoza, Chiapas. Café de estricta altura de la Sierra Madre de Chiapas.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

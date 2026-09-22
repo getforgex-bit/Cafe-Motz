@@ -1,0 +1,181 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-21T00:00:00Z",
+  "title": "Design System: MOTZ CAFÉ",
+  "extensions": {
+    "colorMeta": {
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Leche Vaporizada",
+        "canonical": "#F9F5F0",
+        "tonalRamp": ["#C4B7A5", "#D4CAB9", "#E2DACC", "#EDE6DA", "#F5F0E8", "#F9F5F0", "#FBF8F4", "#FDFCFA"]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Lino de Parque",
+        "canonical": "#F4ECE1"
+      },
+      "surface-raised": {
+        "role": "neutral",
+        "displayName": "Crema de Mesa",
+        "canonical": "#FBF7F1"
+      },
+      "ink": {
+        "role": "primary-text",
+        "displayName": "Roble Tostado",
+        "canonical": "#3D2314",
+        "tonalRamp": ["#1A0F08", "#2A180D", "#3D2314", "#543826", "#6E5240", "#8F7562", "#B8A290", "#E0D6CC"]
+      },
+      "ink-secondary": {
+        "role": "secondary-text",
+        "displayName": "Roble Claro",
+        "canonical": "#6B5644",
+        "note": "Formalized this session; most shipped components still hardcode the pre-migration tones #725C4D and #50443F directly."
+      },
+      "border-hairline": {
+        "role": "neutral",
+        "displayName": "Hilo de Lino",
+        "canonical": "#EFE7DE"
+      },
+      "terracotta": {
+        "role": "primary",
+        "displayName": "Canela Serrana",
+        "canonical": "#B85D36",
+        "tonalRamp": ["#4A2515", "#6B3620", "#8F482B", "#B85D36", "#CC7A56", "#DE9C7E", "#EDBFA8", "#F8E1D4"]
+      },
+      "terracotta-cta": {
+        "role": "primary",
+        "displayName": "Canela Tostada",
+        "canonical": "#A24E2C",
+        "note": "Deepened variant for button fills carrying white text; guarantees AA contrast where the base terracotta sits at the edge."
+      },
+      "caramel": {
+        "role": "tertiary",
+        "displayName": "Caramelo Quemado",
+        "canonical": "#C08A42",
+        "tonalRamp": ["#4F3814", "#71501D", "#986C2C", "#C08A42", "#CFA267", "#DDBB8E", "#EBD5B8", "#F7ECE0"]
+      },
+      "botanical": {
+        "role": "secondary",
+        "displayName": "Musgo de Adobe",
+        "canonical": "#3E5A38",
+        "tonalRamp": ["#15220F", "#223519", "#2F4728", "#3E5A38", "#567650", "#799A73", "#A6C19E", "#D6E5D1"]
+      },
+      "botanical-deep": {
+        "role": "secondary",
+        "displayName": "Musgo Húmedo",
+        "canonical": "#2F4529"
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero H1 only, one per page." },
+      "headline": { "displayName": "Headline", "purpose": "Section titles." },
+      "title": { "displayName": "Title", "purpose": "Card-level headings: menu item names, combo titles." },
+      "body": { "displayName": "Body", "purpose": "Descriptions and paragraph copy." },
+      "label": { "displayName": "Label", "purpose": "Eyebrows, badges, tasting-note tags, size labels." }
+    },
+    "shadows": [
+      { "name": "ambient-card", "value": "0 4px 20px rgba(61,35,20,0.06)", "purpose": "Header once scrolled; barely-there separation." },
+      { "name": "lifted-specialty", "value": "0 8px 24px rgba(184,93,54,0.12)", "purpose": "House-specialty menu cards, paired with a terracotta-tinted ring border." },
+      { "name": "floating-badge", "value": "0 12px 28px rgba(61,35,20,0.14)", "purpose": "Hero's specialty callout card, overlapping the hero image edge." },
+      { "name": "hero-image-frame", "value": "0 16px 36px rgba(61,35,20,0.12)", "purpose": "The hero photograph frame." },
+      { "name": "cta-lift", "value": "0 4px 16px rgba(61,35,20,0.15)", "purpose": "Hero's primary button only." }
+    ],
+    "motion": [
+      { "name": "ease-standard", "value": "cubic-bezier(0.22, 1, 0.36, 1)", "purpose": "Default easing for scroll-reveal and card transitions (motion/Framer Motion)." },
+      { "name": "duration-hover", "value": "200ms", "purpose": "Button and chip hover/active color and transform transitions." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Page-level CTA (\"Explorar Menú\", \"Hacer Pedido / WhatsApp\"). Ink fill, deepens to Canela Serrana on hover with a small lift.",
+      "html": "<button class=\"ds-btn-primary\"><svg class=\"ds-icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z\"/><path d=\"M3 6h18\"/><path d=\"M16 10a4 4 0 0 1-8 0\"/></svg><span>Explorar Menú</span></button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; gap: 10px; background: #3D2314; color: #ffffff; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-size: 14px; font-weight: 600; padding: 14px 24px; border: none; border-radius: 8px; box-shadow: 0 4px 16px rgba(61,35,20,0.15); cursor: pointer; transition: background 0.2s ease, transform 0.2s ease; } .ds-btn-primary:hover { background: #B85D36; transform: translateY(-2px); } .ds-btn-primary:focus-visible { outline: 2px solid #B85D36; outline-offset: 2px; } .ds-btn-primary:active { transform: translateY(0); } .ds-icon { width: 16px; height: 16px; color: #EFE7DE; }"
+    },
+    {
+      "name": "Specialty Button",
+      "kind": "button",
+      "refersTo": "button-specialty",
+      "description": "In-card order button on house-special items. Starts in Canela Serrana (its own hover-equivalent state) since the product is already featured.",
+      "html": "<button class=\"ds-btn-specialty\"><svg class=\"ds-icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z\"/><path d=\"M3 6h18\"/><path d=\"M16 10a4 4 0 0 1-8 0\"/></svg><span>Pedir Especialidad</span></button>",
+      "css": ".ds-btn-specialty { display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: #B85D36; color: #ffffff; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-size: 12px; font-weight: 600; padding: 10px 12px; border: none; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); cursor: pointer; transition: background 0.2s ease; } .ds-btn-specialty:hover { background: #994621; } .ds-btn-specialty:focus-visible { outline: 2px solid #3D2314; outline-offset: 2px; } .ds-icon { width: 14px; height: 14px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Outline CTA (\"Pedir a Domicilio\") or default in-card order button on regular menu items. White fill, ink border and text; hovers to a filled or tinted state depending on context.",
+      "html": "<button class=\"ds-btn-secondary\"><span>Personalizar</span></button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; background: #ffffff; color: #3D2314; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-size: 12px; font-weight: 600; padding: 10px 12px; border: 1px solid #3D2314; border-radius: 8px; cursor: pointer; transition: background 0.2s ease, color 0.2s ease; } .ds-btn-secondary:hover { background: #3D2314; color: #ffffff; } .ds-btn-secondary:focus-visible { outline: 2px solid #B85D36; outline-offset: 2px; }"
+    },
+    {
+      "name": "Category Chip",
+      "kind": "chip",
+      "refersTo": "chip-active",
+      "description": "Menu category tab. Active state is a solid Ink pill; inactive is white with a hairline border.",
+      "html": "<div class=\"ds-chip-row\"><button class=\"ds-chip ds-chip-active\"><svg class=\"ds-icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M17 8h1a4 4 0 1 1 0 8h-1\"/><path d=\"M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z\"/></svg><span>Cafés Calientes</span></button><button class=\"ds-chip ds-chip-inactive\"><span>Bebidas Frías</span></button></div>",
+      "css": ".ds-chip-row { display: flex; gap: 10px; } .ds-chip { display: inline-flex; align-items: center; gap: 8px; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-size: 13px; font-weight: 600; padding: 10px 20px; border-radius: 9999px; white-space: nowrap; cursor: pointer; transition: all 0.2s ease; } .ds-chip-active { background: #3D2314; color: #ffffff; border: 1px solid #3D2314; } .ds-chip-inactive { background: #ffffff; color: #6B5644; border: 1px solid #EFE7DE; } .ds-chip-inactive:hover { background: #F4ECE1; color: #3D2314; } .ds-icon { width: 16px; height: 16px; }"
+    },
+    {
+      "name": "Menu Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "The system's signature repeated component. White surface, hairline border by default, Canela-Serrana ring and tinted shadow on house-specialty items.",
+      "html": "<div class=\"ds-card ds-card-specialty\"><div class=\"ds-card-badge\">Favorito de la Casa</div><div class=\"ds-card-body\"><h3 class=\"ds-card-title\">Mazapán Latte de la Casa</h3><p class=\"ds-card-desc\">Especialidad insignia elaborada con pasta artesanal de cacahuate tostado y espresso serrano.</p><div class=\"ds-card-footer\"><span class=\"ds-card-price\">$68 MXN</span><button class=\"ds-btn-specialty\"><span>Pedir</span></button></div></div></div>",
+      "css": ".ds-card { background: #ffffff; border-radius: 16px; border: 1px solid #EFE7DE; overflow: hidden; width: 260px; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; } .ds-card-specialty { border-color: rgba(184,93,54,0.6); box-shadow: 0 8px 24px rgba(184,93,54,0.12); } .ds-card-badge { background: #B85D36; color: #ffffff; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 9999px; display: inline-block; margin: 12px 0 0 12px; } .ds-card-body { padding: 20px; } .ds-card-title { font-family: 'Playfair Display', Georgia, serif; font-size: 18px; font-weight: 700; color: #3D2314; margin: 8px 0 0; } .ds-card-desc { font-size: 12px; color: #6B5644; line-height: 1.5; margin: 8px 0 0; } .ds-card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 20px; padding-top: 16px; border-top: 1px solid #EFE7DE; } .ds-card-price { font-family: 'Playfair Display', Georgia, serif; font-weight: 800; font-size: 20px; color: #3D2314; }"
+    },
+    {
+      "name": "Input Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Order-drawer text field. Crema-de-Mesa fill, hairline border, border-only focus treatment (no glow ring) matching the system's soft state-change language.",
+      "html": "<div class=\"ds-field\"><label class=\"ds-field-label\">Tu Nombre</label><input class=\"ds-field-input\" type=\"text\" placeholder=\"Ej. Carlos Méndez\" /></div>",
+      "css": ".ds-field { display: flex; flex-direction: column; gap: 4px; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; width: 240px; } .ds-field-label { font-size: 12px; font-weight: 600; color: #50443F; } .ds-field-input { font-size: 12px; padding: 10px; background: #FAF7F2; border: 1px solid #EFE7DE; border-radius: 8px; color: #3D2314; } .ds-field-input:focus { outline: none; border-color: #B85D36; }"
+    },
+    {
+      "name": "Navigation Link",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Header nav link with an animated Canela-Serrana underline that grows from 0 to full width on hover — the one place an accent color animates rather than snapping in.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-link\" href=\"#menu\">Menú</a></nav>",
+      "css": ".ds-nav-link { position: relative; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-size: 14px; font-weight: 500; color: #6B5644; text-decoration: none; padding-bottom: 4px; transition: color 0.2s ease; } .ds-nav-link::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: #B85D36; transition: width 0.2s ease; } .ds-nav-link:hover { color: #3D2314; } .ds-nav-link:hover::after { width: 100%; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "La Casa Cafetera",
+    "overview": "MOTZ CAFÉ is the coffee house as extended family kitchen, not a roastery showroom. Its identity comes from two real physical facts about the actual building on Motozintla's Parque Central: a terracotta adobe facade and deep olive-green window and door carpentry. Every accent color in this system traces back to one of those two materials; nothing is an invented brand hue. The confirmed voice is artesanal pulido — polished artisanal. This sits between two rejected poles: it is not a scanned-recipe-card rustic look (no distressed textures, no hand-lettering, no visible \"wear\"), and it is not a cold, minimal specialty-coffee-brand look either (no stark white, no single-hairline Helvetica restraint). It is the Instagrammable side of tradition — a serif with real editorial weight, generous warm neutrals, and a single confident accent — kept tidy and legible rather than aged. Components are soft and welcoming: state changes (hover, focus, active) read as a gentle deepening of the same hue, never a jarring hue swap or a hard snap.",
+    "keyCharacteristics": [
+      "Warm, muted neutrals as 60% of every surface — never pure white, never pure black.",
+      "One accent (Canela Serrana / terracotta) carries all conversion and interactive weight; a second accent (Musgo de Adobe / botanical) stays decorative and never touches a CTA.",
+      "Playfair Display for every heading, Plus Jakarta Sans for everything else — no third typeface, no display-weight body text.",
+      "Hairline borders over drop shadows by default; tinted shadows are a deliberate, sparingly-used lift.",
+      "Generous rounding (8-16px) on every interactive surface, full pills on tags/chips/nav toggles — nothing sharp-cornered."
+    ],
+    "rules": [
+      { "name": "The One Accent Rule", "body": "Canela Serrana is the only color allowed on a conversion surface (a button someone taps to move toward ordering). If a new component needs emphasis but isn't driving a purchase or an order action, reach for Musgo de Adobe or Caramelo Quemado instead, never a second shade of terracotta.", "section": "colors" },
+      { "name": "The Two-Font Rule", "body": "Every heading is Playfair Display; everything else — body copy, labels, buttons, navigation — is Plus Jakarta Sans. No component introduces a third face, and body text never borrows the display serif for \"emphasis.\"", "section": "typography" },
+      { "name": "The Tinted-Shadow Rule", "body": "No shadow on this site is neutral gray or rgba(0,0,0,...). Every shadow color derives from Ink or Terracotta at low opacity, so elevation reads as \"warmth pooling\" rather than \"object floating in space.\"", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep Canela Serrana (terracotta) as the only conversion color — every \"order,\" \"pedir,\" or WhatsApp CTA either starts in it or hovers into it.",
+      "Do use hairline borders (Hilo de Lino, 1px) as the default card/section separator; reach for a shadow only when something should visually lift.",
+      "Do tint every shadow with Ink or Terracotta at low opacity — never a neutral-gray or pure-black shadow.",
+      "Do pair Playfair Display headings with Plus Jakarta Sans body copy on every new screen.",
+      "Do use the existing radius scale (8 / 12 / 16px, full pills) — nothing sharp-cornered, nothing rounder than a pill."
+    ],
+    "donts": [
+      "Don't use Musgo de Adobe (botanical green) on a conversion surface — it's confirmed decorative-only (badges, secondary panels), never a button a visitor taps to order.",
+      "Don't introduce a third typeface or use Playfair Display for body-length copy.",
+      "Don't add new one-off secondary-text hexes. #725C4D and #50443F still appear throughout the current components (pre-migration); new work should reach for ink-secondary (#6B5644) instead.",
+      "Don't present the contact details, address, or loyalty barcode in BRAND_INFO as verified real-world facts — per PRODUCT.md, these are illustrative placeholders for a concept project."
+    ]
+  }
+}
