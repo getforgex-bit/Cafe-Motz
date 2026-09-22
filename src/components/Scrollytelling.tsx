@@ -627,16 +627,16 @@ export const Scrollytelling: React.FC<ScrollytellingProps> = ({ reducedMotion, o
           }}
           className="absolute inset-0 z-20 flex flex-col items-center justify-end px-6 pb-28 sm:pb-32 text-center"
         >
-          {/* Sierra Verde video, visible in the upper half; canvas rises from below */}
+          {/* Cascada Serrana video, visible in the upper half; canvas rises from below */}
           <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
             <SierraScrollVideo
               scrollYProgress={scrollYProgress}
               range={[0.76, 1.0]}
               isReducedMotion={reducedMotion}
-              videoMp4="/videos/sierra-verde-mesa.mp4"
-              videoWebm="/videos/sierra-verde-mesa.webm"
-              poster="/videos/sierra-verde-mesa-poster.jpg"
-              alt="Video de la Sierra Verde de Chiapas interactivo con scroll"
+              videoMp4="/videos/sierra-cascada.mp4"
+              videoWebm="/videos/sierra-cascada.webm"
+              poster="/videos/sierra-cascada-poster.jpg"
+              alt="Video de una cascada serrana de Chiapas interactivo con scroll"
             />
             <div
               aria-hidden="true"
