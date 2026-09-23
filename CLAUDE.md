@@ -40,8 +40,8 @@ This is a single-page marketing/ordering site for a coffee shop (MOTZ CAFÉ, Mot
 
 **Icons**: `lucide-react` only, used consistently across components.
 
-**Images**: menu/hero imagery is hotlinked from `images.unsplash.com` (no local copies). The only local media is under `public/videos/` (Sierra Madre / Sierra Verde mp4/webm + poster jpgs), used by `SierraScrollVideo`.
+**Images**: menu/hero imagery is hotlinked from `images.unsplash.com` (no local copies). The only local media is under `public/videos/`: `sierra-madre` (Scene 1) and `sierra-cascada` (Scene 5) mp4/webm + posters, used by `SierraScrollVideo`; `sierra-verde-mesa-poster.jpg` is a still used by `StorySection`.
 
-**Deployment is Cloudflare (Workers static assets or Pages)**: `wrangler.jsonc` serves `./dist` as an assets-only Worker with SPA fallback; `public/_headers` sets security and cache headers (works on both Workers and Pages). There is no Worker script and no server code. Cloudflare caps each static asset at 25 MiB, and `public/videos/sierra-verde-mesa.mp4` is ~23.9 MiB, so keep any new media under that limit. The AI Studio scaffolding (`@google/genai`, `express`, `dotenv`, `tsx`, the Gemini env vars) was removed.
+**Deployment is Cloudflare (Workers static assets or Pages)**: `wrangler.jsonc` serves `./dist` as an assets-only Worker with SPA fallback; `public/_headers` sets security and cache headers (works on both Workers and Pages). There is no Worker script and no server code. Cloudflare caps each static asset at 25 MiB. Cloudflare also ignores HTTP Range requests on edge-cached assets (always 200, never 206), which makes network videos unseekable in Chrome; that is why `SierraScrollVideo` downloads each video once and plays it from a Blob URL. Keep scroll-scrubbed clips small (a few MB), since they are fetched whole. The AI Studio scaffolding (`@google/genai`, `express`, `dotenv`, `tsx`, the Gemini env vars) was removed.
 
 **`vite.config.ts` note** (preserved from the template, do not remove): HMR and file watching are gated on `process.env.DISABLE_HMR` — AI Studio sets this to disable file watching during agent edits to prevent flicker.

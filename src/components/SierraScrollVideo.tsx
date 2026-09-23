@@ -59,16 +59,58 @@ export const SierraScrollVideo: React.FC<SierraScrollVideoProps> = ({
   // Mode: 'scroll' (syncs with scroll) or 'auto' (continuous ambient playback)
   const [playbackMode, setPlaybackMode] = useState<'scroll' | 'auto'>('scroll');
 
-  // Sync video duration when metadata loads
+  // Video source. Scroll-scrubbing needs a seekable resource, and a seekable
+  // network resource needs the server to honor HTTP Range requests. Cloudflare's
+  // static assets reply 200 with the whole file (never 206) once the file is
+  // edge-cached, so Chrome reports video.seekable = [[0,0]] and every
+  // currentTime write snaps back to 0. Downloading the file once and playing it
+  // from an in-memory Blob URL makes it fully seekable regardless of the host.
+  const [videoSrc, setVideoSrc] = useState<string | null>(null);
+
+  useEffect(() => {
+    const probe = document.createElement('video');
+    const url = probe.canPlayType('video/mp4') || !videoWebm ? videoMp4 : videoWebm;
+    const controller = new AbortController();
+    let objectUrl: string | null = null;
+
+    fetch(url, { signal: controller.signal })
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.blob();
+      })
+      .then((blob) => {
+        objectUrl = URL.createObjectURL(blob);
+        setVideoSrc(objectUrl);
+      })
+      .catch((err: unknown) => {
+        if (err instanceof DOMException && err.name === 'AbortError') return;
+        // Fall back to streaming from the network (plays, but may not scrub on hosts without Range support)
+        setVideoSrc(url);
+      });
+
+    return () => {
+      controller.abort();
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [videoMp4, videoWebm]);
+
+  // Sync video duration when metadata loads, then jump to wherever the scroll already is
   const handleLoadedMetadata = () => {
-    if (videoRef.current) {
-      const dur = videoRef.current.duration;
-      if (dur && !isNaN(dur) && dur > 0) {
-        durationRef.current = dur;
-        isLoadedRef.current = true;
-        setScrollState((prev) => ({ ...prev, duration: dur }));
-      }
+    const video = videoRef.current;
+    if (!video) return;
+    const dur = video.duration;
+    if (dur && !isNaN(dur) && dur > 0) {
+      durationRef.current = dur;
+      isLoadedRef.current = true;
+      setScrollState((prev) => ({ ...prev, duration: dur }));
     }
+    if (scrollYProgress) {
+      const [startRange, endRange] = range;
+      const normalized = Math.max(0, Math.min(1, (scrollYProgress.get() - startRange) / (endRange - startRange)));
+      targetTimeRef.current = normalized * durationRef.current;
+    }
+    const target = Math.max(0, Math.min(durationRef.current - 0.05, targetTimeRef.current));
+    if (target > 0.01) video.currentTime = target;
   };
 
   const handleCanPlay = () => {
@@ -259,11 +301,8 @@ export const SierraScrollVideo: React.FC<SierraScrollVideoProps> = ({
     video.defaultMuted = true;
     video.setAttribute('playsinline', 'true');
     video.setAttribute('webkit-playsinline', 'true');
-    try {
-      video.load();
-    } catch {
-      // Ignored
-    }
+    // Nothing to unlock until the Blob source is ready (setting src already runs the load algorithm)
+    if (!videoSrc) return;
 
     // Silent play to unlock media engine on mobile
     const unlockMedia = () => {
@@ -290,7 +329,7 @@ export const SierraScrollVideo: React.FC<SierraScrollVideoProps> = ({
       window.removeEventListener('pointerdown', unlockMedia);
       window.removeEventListener('scroll', unlockMedia);
     };
-  }, [playbackMode, videoMp4]);
+  }, [playbackMode, videoSrc]);
 
   // 3b. Repaint recovery: when the page is hidden/shown, enters or leaves fullscreen, or is resized,
   // Chrome may drop the decoded frame of a paused video, leaving a transparent <video>
@@ -388,13 +427,12 @@ export const SierraScrollVideo: React.FC<SierraScrollVideoProps> = ({
         loop={playbackMode === 'auto'}
         preload="auto"
         poster={poster}
+        src={videoSrc ?? undefined}
         onLoadedMetadata={handleLoadedMetadata}
         onCanPlay={handleCanPlay}
         aria-label={alt}
         className="w-full h-full object-cover filter saturate-[1.20] contrast-[1.06] brightness-[0.98] transition-opacity duration-300 pointer-events-none"
       >
-        <source src={videoMp4} type="video/mp4" />
-        {videoWebm && <source src={videoWebm} type="video/webm" />}
         <img
           src={poster}
           alt={alt}
