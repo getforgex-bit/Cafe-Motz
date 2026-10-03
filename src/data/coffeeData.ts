@@ -194,6 +194,21 @@ export const COMBOS: ComboItem[] = [
   },
 ];
 
+/**
+ * Leche y extras de una bebida (solo calientes y fríos). Fuente única de sus precios: los usa el pedido
+ * y Scan-bar los registra como productos (npm run sync:repos) para emitir el código de cada bebida configurada.
+ */
+export const MODIFICADORES = {
+  leche: {
+    entera: { sku: 'LECHE-ENTERA', nombre: 'Leche entera', precio: 0 },
+    deslactosada: { sku: 'LECHE-DESLACTOSADA', nombre: 'Leche deslactosada', precio: 10 },
+    almendra: { sku: 'LECHE-ALMENDRA', nombre: 'Bebida de almendra', precio: 10 },
+    avena: { sku: 'LECHE-AVENA', nombre: 'Bebida de avena', precio: 10 },
+  },
+  extraShot: { sku: 'EXTRA-ESPRESSO', nombre: 'Shot extra de espresso', precio: 12 },
+  cremaBatida: { sku: 'CREMA-BATIDA', nombre: 'Crema batida casera', precio: 8 },
+} as const;
+
 export const CORE_VALUES = [
   {
     number: '1',

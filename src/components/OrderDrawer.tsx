@@ -13,9 +13,11 @@ import {
   Store,
   Package,
   ArrowRight,
+  ScanBarcode,
 } from 'lucide-react';
 import { MenuItem, ComboItem, MilkOption, OrderType, CartItem } from '../types';
-import { BRAND_INFO } from '../data/coffeeData';
+import { BRAND_INFO, MODIFICADORES } from '../data/coffeeData';
+import { SCANBAR_URL, formatearGtin } from '../lib/scanbar';
 import { TipCalculator } from './TipCalculator';
 
 interface OrderDrawerProps {
@@ -79,9 +81,9 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
     }
   }
 
-  const milkCost = ['deslactosada', 'almendra', 'avena'].includes(milk) ? 10 : 0;
-  const extraShotCost = extraShot ? 12 : 0;
-  const whippedCreamCost = whippedCream ? 8 : 0;
+  const milkCost = milk === 'ninguna' ? 0 : MODIFICADORES.leche[milk].precio;
+  const extraShotCost = extraShot ? MODIFICADORES.extraShot.precio : 0;
+  const whippedCreamCost = whippedCream ? MODIFICADORES.cremaBatida.precio : 0;
   const singleItemCustomTotal = selectedProduct
     ? currentProductPrice + milkCost + extraShotCost + whippedCreamCost
     : 0;
@@ -156,7 +158,9 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
           text += `   _(${specs.join(', ')})_\n`;
         }
         text += `   $${(it.unitPrice * it.quantity).toFixed(2)} MXN\n`;
+        if (it.codigo) text += `   Código: ${it.codigo}\n`;
       });
+      if (cartItems.some((it) => it.codigo)) text += `_(Muestra los códigos en caja para cobrar al instante)_\n`;
     } else if (selectedProduct) {
       const productName = isMenuItem
         ? (selectedProduct as MenuItem).name
@@ -168,8 +172,8 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
       if (isMenuItem && ['calientes', 'frios'].includes((selectedProduct as MenuItem).category)) {
         text += `*Leche:* ${milk.toUpperCase()}\n`;
       }
-      if (extraShot) text += `*Extra:* +1 Shot de Espresso (+$12)\n`;
-      if (whippedCream) text += `*Extra:* +Crema batida casera (+$8)\n`;
+      if (extraShot) text += `*Extra:* +1 Shot de Espresso (+$${MODIFICADORES.extraShot.precio})\n`;
+      if (whippedCream) text += `*Extra:* +Crema batida casera (+$${MODIFICADORES.cremaBatida.precio})\n`;
     }
 
     text += `━━━━━━━━━━━━━━━━━━━━━━\n`;
@@ -324,10 +328,10 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     {[
-                      { id: 'entera' as MilkOption, label: 'Entera', extra: '+$0' },
-                      { id: 'deslactosada' as MilkOption, label: 'Deslact.', extra: '+$10' },
-                      { id: 'almendra' as MilkOption, label: 'Almendra', extra: '+$10' },
-                      { id: 'avena' as MilkOption, label: 'Avena', extra: '+$10' },
+                      { id: 'entera' as const, label: 'Entera' },
+                      { id: 'deslactosada' as const, label: 'Deslact.' },
+                      { id: 'almendra' as const, label: 'Almendra' },
+                      { id: 'avena' as const, label: 'Avena' },
                     ].map((m) => (
                       <button
                         key={m.id}
@@ -340,7 +344,7 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
                         }`}
                       >
                         <span>{m.label}</span>
-                        <span className="text-[10px] opacity-80">{m.extra}</span>
+                        <span className="text-[10px] opacity-80">+${MODIFICADORES.leche[m.id].precio}</span>
                       </button>
                     ))}
                   </div>
@@ -364,7 +368,7 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
                       }`}
                     >
                       <span>+1 Shot Espresso</span>
-                      <span className="font-bold text-[#B85D36]">+$12</span>
+                      <span className="font-bold text-[#B85D36]">+${MODIFICADORES.extraShot.precio}</span>
                     </button>
 
                     <button
@@ -377,7 +381,7 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
                       }`}
                     >
                       <span>+Crema Batida</span>
-                      <span className="font-bold text-[#B85D36]">+$8</span>
+                      <span className="font-bold text-[#B85D36]">+${MODIFICADORES.cremaBatida.precio}</span>
                     </button>
                   </div>
                 </div>
@@ -446,6 +450,19 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
                       <p className="text-xs font-serif font-bold text-[#B85D36] mt-0.5">
                         ${(item.unitPrice * item.quantity).toFixed(2)} MXN
                       </p>
+                      {item.codigo && (
+                        <details className="mt-1">
+                          <summary className="cursor-pointer text-[11px] text-ink-secondary inline-flex items-center gap-1 tabular-nums">
+                            <ScanBarcode className="w-3 h-3" aria-hidden="true" />
+                            <span>Código {formatearGtin(item.codigo)}</span>
+                          </summary>
+                          <img
+                            src={`${SCANBAR_URL}/v1/codes/${item.codigo}.svg?kind=ean13`}
+                            alt={`Código de barras ${item.codigo}`}
+                            className="mt-1 h-14 w-auto bg-white rounded p-1"
+                          />
+                        </details>
+                      )}
                     </div>
 
                     {/* Quantity controls */}

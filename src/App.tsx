@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Header } from './components/Header';
 import { Scrollytelling } from './components/Scrollytelling';
 import { Hero } from './components/Hero';
@@ -18,6 +18,7 @@ import { OrderStatusWidget } from './components/OrderStatusWidget';
 import { AmbientAudio } from './components/AmbientAudio';
 import { MenuItem, ComboItem, OrderType, CartItem } from './types';
 import { MENU_ITEMS, BRAND_INFO } from './data/coffeeData';
+import { SCANBAR_URL, useMenuScanbar, lineasDe, registrarConfiguracion } from './lib/scanbar';
 import { soundscape, SoundscapeType } from './utils/soundscapeEngine';
 import { cinematicScrollToMenu } from './utils/cinematicScroll';
 import { MessageSquare } from 'lucide-react';
@@ -53,6 +54,26 @@ export default function App() {
   }, [cartItems]);
 
   const totalCartItems = cartItems.reduce((acc, it) => acc + it.quantity, 0);
+
+  // Menú del código + productos agregados desde Scan-bar (si está configurado).
+  const extrasScanbar = useMenuScanbar();
+  const menu = useMemo(() => [...MENU_ITEMS, ...extrasScanbar], [extrasScanbar]);
+
+  // Cada bebida configurada del carrito recibe su código de Scan-bar (misma configuración → mismo código).
+  const codigosPedidos = useRef(new Set<string>());
+  useEffect(() => {
+    if (!SCANBAR_URL) return;
+    for (const it of cartItems) {
+      const lineas = it.codigo ? null : lineasDe(it, menu);
+      if (!lineas) continue;
+      const clave = JSON.stringify(lineas);
+      if (codigosPedidos.current.has(clave)) continue;
+      codigosPedidos.current.add(clave);
+      registrarConfiguracion(lineas, it.isCombo ? 'Pedido' : 'Bebida').then((r) => {
+        if (r) setCartItems((prev) => prev.map((x) => (!x.codigo && JSON.stringify(lineasDe(x, menu)) === clave ? { ...x, codigo: r.gtin } : x)));
+      });
+    }
+  }, [cartItems, menu]);
 
   const handleAddToCart = (item: CartItem) => {
     setCartItems((prev) => {
@@ -233,6 +254,7 @@ export default function App() {
 
         {/* CARTA DE ESPECIALIDAD: Menu Section with category tabs */}
         <MenuSection
+          items={menu}
           onSelectItem={handleOpenProductOrder}
           onQuickAdd={handleQuickAddMenuItem}
           reducedMotion={reducedMotion}

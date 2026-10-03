@@ -28,6 +28,8 @@ This is a single-page marketing/ordering site for a coffee shop (MOTZ CAFÉ, Mot
 
 **There is no real checkout backend.** `OrderDrawer` builds a formatted order summary and deep-links to `wa.me` (WhatsApp) — that's the entire "order submission" mechanism. Don't assume an API exists for orders/cart.
 
+**Scan-bar integration** (`src/lib/scanbar.ts`, optional, off unless `VITE_SCANBAR_URL` is set or `?scanbar=http://localhost:…` is used): Scan-bar is the shared product/barcode database of the businesses. `useMenuScanbar()` appends products added in Scan-bar to the menu; each cart line gets a `codigo` (GTIN-13) from `POST /v1/public/t/cafe-motz/configurations`, shown in the drawer and sent in the WhatsApp text. SKUs must match Scan-bar's `scripts/sync-repos.ts` (`skuDeTamano`: `id-ch`/`id-gde` with two sizes, `id` with one). Milk/extra prices live in `MODIFICADORES` in `coffeeData.ts` (single source; Scan-bar syncs them). The site must keep working when Scan-bar is unreachable.
+
 **Content is centralized in `src/data/coffeeData.ts`** (`MENU_ITEMS`, `COMBOS`, `BRAND_INFO`, `CORE_VALUES`) and typed in `src/types.ts`. This is the single source of truth for menu items, prices, hours, and brand copy — update content here, not inline in components.
 
 **Page composition** (`App.tsx`, top to bottom): `Header` → `Scrollytelling` (pinned-scroll cinematic intro) → `Hero` → `StorySection` → `MenuSection` → `CombosSection` → `OrderModesAndLoyalty` → `LocationHours` → `Footer`, plus floating/portal-less widgets rendered outside `<main>`: `OrderStatusWidget` (cart summary), `OrderDrawer` (checkout modal), `AmbientAudio`.

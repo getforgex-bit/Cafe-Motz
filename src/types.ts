@@ -14,6 +14,8 @@ export interface MenuItem {
   image: string;
   isHouseSpecial?: boolean;
   preparationTime?: string;
+  /** Solo productos agregados desde Scan-bar: SKU de cada tamaño (los del menú siguen la regla de skuDeTamano). */
+  skus?: { small: string; large?: string };
 }
 
 export interface ComboItem {
@@ -56,4 +58,6 @@ export interface CartItem {
   quantity: number;
   image?: string;
   isCombo?: boolean;
+  /** GTIN-13 que Scan-bar emitió para esta configuración (bebida con su tamaño, leche y extras). */
+  codigo?: string;
 }

@@ -5,6 +5,8 @@ import { MENU_ITEMS } from '../data/coffeeData';
 import { MenuItem, ProductCategory } from '../types';
 
 interface MenuSectionProps {
+  /** Menú a mostrar (por defecto el del código; App suma los productos agregados desde Scan-bar). */
+  items?: MenuItem[];
   onSelectItem: (item: MenuItem, size?: 'small' | 'large') => void;
   onQuickAdd?: (item: MenuItem) => void;
   reducedMotion?: boolean;
@@ -108,7 +110,7 @@ const ItemBadge: React.FC<{ item: MenuItem }> = ({ item }) =>
     </span>
   ) : null;
 
-export const MenuSection: React.FC<MenuSectionProps> = ({ onSelectItem, onQuickAdd, reducedMotion = false }) => {
+export const MenuSection: React.FC<MenuSectionProps> = ({ items = MENU_ITEMS, onSelectItem, onQuickAdd, reducedMotion = false }) => {
   const [activeCategory, setActiveCategory] = useState<ProductCategory>('calientes');
   const prefersReduced = useReducedMotion();
   const shouldReduce = Boolean(reducedMotion || prefersReduced);
@@ -120,7 +122,7 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ onSelectItem, onQuickA
     { id: 'postres' as ProductCategory, label: 'Postres & Repostería', icon: Cake },
   ];
 
-  const filteredItems = MENU_ITEMS.filter((item) => item.category === activeCategory);
+  const filteredItems = items.filter((item) => item.category === activeCategory);
   const featured = filteredItems.find((item) => item.isHouseSpecial);
   const listItems = filteredItems.filter((item) => item !== featured);
 
