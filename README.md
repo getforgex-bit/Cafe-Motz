@@ -17,27 +17,24 @@ npm run build      # build de producción en ./dist
 
 ## Despliegue en Cloudflare
 
-El build (`./dist`) se sirve como assets estáticos. La configuración está en `wrangler.jsonc` y las cabeceras HTTP (seguridad y caché) en `public/_headers`.
+El build (`./dist`) se sirve como assets estáticos. La configuración está en `wrangler.jsonc` (incluye `build.command`, así que `npx wrangler deploy` compila solo) y las cabeceras HTTP (seguridad y caché) en `public/_headers`.
 
-### Opción A: Cloudflare Workers (recomendada)
+**Despliegue por defecto** (recomendado): **Workers & Pages → Create → Import a repository** → este repositorio → **Deploy**, sin cambiar nada (nombre `cafe-motz`, build command vacío, deploy command `npx wrangler deploy`). Cada push a `main` publica.
+
+Desde la terminal:
 
 ```bash
 npx wrangler login     # una sola vez
-npm run deploy         # build + wrangler deploy
+npm run deploy         # compila con Vite y publica
 ```
 
 Para probar localmente con el runtime de Cloudflare: `npm run cf:dev` (http://localhost:8787).
 
-También puedes conectar este repositorio en **Workers & Pages → Create → Import a repository**, con:
-
-- Build command: `npm run build`
-- Deploy command: `npx wrangler deploy`
-
-Queda en `https://motz-cafe.<tu-cuenta>.workers.dev`. Usa Workers y no Pages: en la misma cuenta que Scan-bar, la página lo encuentra sola y Scan-bar sabe a qué URL mandar sus códigos. Pasos de todo el sistema: `docs/DESPLIEGUE.md` en el repositorio Scan-bar.
+Queda en `https://cafe-motz.<tu-cuenta>.workers.dev`. Usa Workers y no Pages: en la misma cuenta que Scan-bar, la página lo encuentra sola y Scan-bar sabe a qué URL mandar sus códigos. Pasos de todo el sistema: `docs/DESPLIEGUE.md` en el repositorio Scan-bar.
 
 ### Límite de tamaño de archivos
 
-Cloudflare limita cada asset estático a 25 MiB. `public/videos/sierra-verde-mesa.mp4` pesa ~23.9 MiB, así que cualquier video nuevo o reemplazo debe quedarse por debajo de ese límite (o alojarse en R2 / Cloudflare Stream).
+Cloudflare limita cada asset estático a 25 MiB. Hoy el más grande es `public/videos/sierra-madre.mp4` (~5.4 MiB); cualquier video nuevo o reemplazo debe quedarse por debajo de ese límite (o alojarse en R2 / Cloudflare Stream).
 
 ## Scan-bar (catálogo y códigos)
 
@@ -46,6 +43,6 @@ Scan-bar es la base de datos de productos y códigos de barras de los negocios (
 - El menú de `src/data/coffeeData.ts` se registra solo en Scan-bar (Scan-bar revisa este repositorio cada 10 minutos; `npm run sync:repos` allá lo fuerza): cada tamaño es un producto con su código (`americano-ch`, `americano-gde`), y la leche y los extras de `MODIFICADORES` también.
 - **Cada bebida configurada** (tamaño + leche + extras) recibe su código al agregarse al pedido: se ve en el pedido con su código de barras y viaja en el mensaje de WhatsApp para cobrarla en caja escaneándolo.
 - Los productos agregados desde Scan-bar (*Administración → Productos y etiquetas*) aparecen en el menú: categoría = pestaña (`calientes`, `frios`, `comida`, `postres`), hasta dos variantes (chico, grande).
-- Conexión: automática si la página vive en `motz-cafe.<tu-cuenta>.workers.dev` (usa `scan-bar.<tu-cuenta>.workers.dev`). En otro dominio: `VITE_SCANBAR_URL=https://URL-DE-SCAN-BAR` al compilar (en Cloudflare, variable de build); `VITE_SCANBAR_URL=off` la apaga.
+- Conexión: automática si la página vive en `cafe-motz.<tu-cuenta>.workers.dev` (usa `scan-bar.<tu-cuenta>.workers.dev`). En otro dominio: `VITE_SCANBAR_URL=https://URL-DE-SCAN-BAR` al compilar (en Cloudflare, variable de build); `VITE_SCANBAR_URL=off` la apaga.
 - Probar en local: Scan-bar en otro puerto (`PORT=3001 npm start` allá), `npm run dev` aquí y abrir `http://localhost:3000/?scanbar=http://localhost:3001` (solo acepta localhost).
 - Contrato y diseño completo: `docs/INTEGRACION-WEBS.md` en el repositorio Scan-bar.

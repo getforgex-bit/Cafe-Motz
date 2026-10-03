@@ -10,8 +10,8 @@ npm run dev           # vite dev server on port 3000
 npm run build         # vite production build into ./dist
 npm run preview       # preview the production build
 npm run lint          # tsc --noEmit (this is the only "lint"; no eslint config in the repo)
-npm run cf:dev        # build + wrangler dev (Cloudflare runtime, port 8787)
-npm run deploy        # build + wrangler deploy (Cloudflare Workers static assets)
+npm run cf:dev        # wrangler dev (runs the Vite build via build.command; Cloudflare runtime, port 8787)
+npm run deploy        # wrangler deploy (build.command runs the Vite build first; Cloudflare Workers static assets)
 npm run clean         # rm -rf dist .wrangler
 ```
 
@@ -44,6 +44,6 @@ This is a single-page marketing/ordering site for a coffee shop (MOTZ CAFÉ, Mot
 
 **Images**: menu/hero imagery is hotlinked from `images.unsplash.com` (no local copies). The only local media is under `public/videos/`: `sierra-madre` (Scene 1) and `sierra-cascada` (Scene 5) mp4/webm + posters, used by `SierraScrollVideo`; `sierra-verde-mesa-poster.jpg` is a still used by `StorySection`.
 
-**Deployment is Cloudflare (Workers static assets or Pages)**: `wrangler.jsonc` serves `./dist` as an assets-only Worker with SPA fallback; `public/_headers` sets security and cache headers (works on both Workers and Pages). There is no Worker script and no server code. Cloudflare caps each static asset at 25 MiB. Cloudflare also ignores HTTP Range requests on edge-cached assets (always 200, never 206), which makes network videos unseekable in Chrome; that is why `SierraScrollVideo` downloads each video once and plays it from a Blob URL. Keep scroll-scrubbed clips small (a few MB), since they are fetched whole. The AI Studio scaffolding (`@google/genai`, `express`, `dotenv`, `tsx`, the Gemini env vars) was removed.
+**Deployment is Cloudflare Workers static assets** (Worker `cafe-motz`, same name as the repo, so Cloudflare's default Git deploy works with no settings): `wrangler.jsonc` builds with `build.command` and serves `./dist` as an assets-only Worker with SPA fallback; `public/_headers` sets security and cache headers (works on both Workers and Pages). There is no Worker script and no server code. Cloudflare caps each static asset at 25 MiB. Cloudflare also ignores HTTP Range requests on edge-cached assets (always 200, never 206), which makes network videos unseekable in Chrome; that is why `SierraScrollVideo` downloads each video once and plays it from a Blob URL. Keep scroll-scrubbed clips small (a few MB), since they are fetched whole. The AI Studio scaffolding (`@google/genai`, `express`, `dotenv`, `tsx`, the Gemini env vars) was removed.
 
 **`vite.config.ts` note** (preserved from the template, do not remove): HMR and file watching are gated on `process.env.DISABLE_HMR` — AI Studio sets this to disable file watching during agent edits to prevent flicker.

@@ -1,9 +1,14 @@
-// Cloudflare Workers (static assets). The site is a pure SPA built by Vite into ./dist:
-// no server code, so this Worker only serves assets. Deploy with `npm run deploy`.
+// Cloudflare Workers (static assets). The site is a pure SPA built by Vite into ./dist: no server code,
+// so this Worker only serves assets. Works with Cloudflare's default Git deploy (Import a repository, empty build
+// command, `npx wrangler deploy`): `build.command` runs the Vite build first. The name matches the repository
+// (what Cloudflare proposes on import) and the "worker" of this business in Scan-bar (apps/api/src/sync.ts).
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "motz-cafe",
+  "name": "cafe-motz",
   "compatibility_date": "2026-09-01",
+  "build": {
+    "command": "npm run build"
+  },
   "assets": {
     "directory": "./dist",
     // Unknown paths fall back to index.html (single-page app, hash-based anchors only).
