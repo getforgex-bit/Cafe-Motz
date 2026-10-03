@@ -16,6 +16,9 @@ export interface MenuItem {
   preparationTime?: string;
   /** Solo productos agregados desde Scan-bar: SKU de cada tamaño (los del menú siguen la regla de skuDeTamano). */
   skus?: { small: string; large?: string };
+  calories?: number;
+  caloriesLarge?: number;
+  allergens?: string[];
 }
 
 export interface ComboItem {
@@ -26,6 +29,8 @@ export interface ComboItem {
   description: string;
   price: number;
   isPopular?: boolean;
+  calories?: number;
+  allergens?: string[];
 }
 
 export type MilkOption = 'entera' | 'deslactosada' | 'almendra' | 'avena' | 'ninguna';
@@ -60,4 +65,6 @@ export interface CartItem {
   isCombo?: boolean;
   /** GTIN-13 que Scan-bar emitió para esta configuración (bebida con su tamaño, leche y extras). */
   codigo?: string;
+  calories?: number;
+  allergens?: string[];
 }

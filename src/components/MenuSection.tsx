@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Coffee, Snowflake, Utensils, Cake, Sparkles, SlidersHorizontal, ShoppingBag, Plus, Clock } from 'lucide-react';
+import { Coffee, Snowflake, Utensils, Cake, Sparkles, SlidersHorizontal, ShoppingBag, Plus, Clock, Flame } from 'lucide-react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { MENU_ITEMS } from '../data/coffeeData';
 import { MenuItem, ProductCategory } from '../types';
@@ -98,6 +98,28 @@ const TastingLine: React.FC<{ notes?: string[] }> = ({ notes }) =>
     </p>
   ) : null;
 
+const NutritionalLine: React.FC<{ item: MenuItem }> = ({ item }) => {
+  if (!item.calories && (!item.allergens || item.allergens.length === 0)) return null;
+  return (
+    <div className="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-ink-secondary">
+      {item.calories && (
+        <span className="inline-flex items-center gap-1 font-sans tabular-nums font-medium text-[#3D2314]">
+          <Flame className="w-3.5 h-3.5 text-[#B85D36]" aria-hidden="true" />
+          <span>~{item.calories}{item.caloriesLarge ? `-${item.caloriesLarge}` : ''} kcal</span>
+        </span>
+      )}
+      {item.calories && item.allergens && item.allergens.length > 0 && (
+        <span aria-hidden="true" className="text-[#D9CBBB]">·</span>
+      )}
+      {item.allergens && item.allergens.length > 0 ? (
+        <span>Alérgenos: {item.allergens.join(', ')}</span>
+      ) : (
+        <span className="text-[#3E5A38]">Sin alérgenos comunes</span>
+      )}
+    </div>
+  );
+};
+
 const ItemBadge: React.FC<{ item: MenuItem }> = ({ item }) =>
   item.badge ? (
     <span
@@ -118,8 +140,8 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ items = MENU_ITEMS, on
   const categories = [
     { id: 'calientes' as ProductCategory, label: 'Cafés Calientes', icon: Coffee },
     { id: 'frios' as ProductCategory, label: 'Bebidas Frías & Frappés', icon: Snowflake },
-    { id: 'comida' as ProductCategory, label: 'Comida & Salados', icon: Utensils },
-    { id: 'postres' as ProductCategory, label: 'Postres & Repostería', icon: Cake },
+    { id: 'comida' as ProductCategory, label: 'Para Comer', icon: Utensils },
+    { id: 'postres' as ProductCategory, label: 'Panadería y Postres', icon: Cake },
   ];
 
   const filteredItems = items.filter((item) => item.category === activeCategory);
@@ -214,6 +236,7 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ items = MENU_ITEMS, on
                       className="w-full aspect-[16/10] object-cover transition-transform duration-700 ease-out hover:scale-[1.03] motion-reduce:transform-none"
                       loading="lazy"
                       decoding="async"
+                      referrerPolicy="no-referrer"
                     />
                   </div>
                   <div className="lg:col-span-5">
@@ -225,6 +248,7 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ items = MENU_ITEMS, on
                       {featured.description}
                     </p>
                     <TastingLine notes={featured.tastingNotes} />
+                    <NutritionalLine item={featured} />
                     <div className="mt-8 pt-6 border-t border-[#EFE7DE] flex flex-col sm:flex-row sm:items-end justify-between gap-6">
                       <PriceSheet item={featured} large />
                       <ItemActions item={featured} onSelectItem={onSelectItem} onQuickAdd={onQuickAdd} />
@@ -249,6 +273,7 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ items = MENU_ITEMS, on
                         className="w-full aspect-[4/5] object-cover transition-transform duration-700 ease-out hover:scale-[1.04] motion-reduce:transform-none"
                         loading="lazy"
                         decoding="async"
+                        referrerPolicy="no-referrer"
                       />
                     </div>
 
@@ -263,6 +288,7 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ items = MENU_ITEMS, on
                         {item.description}
                       </p>
                       <TastingLine notes={item.tastingNotes} />
+                      <NutritionalLine item={item} />
                     </div>
 
                     <div className="col-span-2 sm:col-span-12 lg:col-span-4 lg:pl-8 lg:border-l border-[#EFE7DE] flex flex-col sm:flex-row lg:flex-col sm:items-end lg:items-stretch justify-between gap-5">

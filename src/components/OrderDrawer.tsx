@@ -14,6 +14,7 @@ import {
   Package,
   ArrowRight,
   ScanBarcode,
+  Flame,
 } from 'lucide-react';
 import { MenuItem, ComboItem, MilkOption, OrderType, CartItem } from '../types';
 import { BRAND_INFO, MODIFICADORES } from '../data/coffeeData';
@@ -88,8 +89,56 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
     ? currentProductPrice + milkCost + extraShotCost + whippedCreamCost
     : 0;
 
+  // Nutritional calculation for current customizing product (if any)
+  let baseProductCalories = 0;
+  let currentProductCalories = 0;
+  let currentProductAllergens: string[] = [];
+
+  if (selectedProduct) {
+    if (isMenuItem) {
+      const item = selectedProduct as MenuItem;
+      baseProductCalories =
+        size === 'large' && item.caloriesLarge ? item.caloriesLarge : (item.calories || 0);
+
+      let extraCalories = 0;
+      if (['calientes', 'frios'].includes(item.category)) {
+        if (extraShot) extraCalories += 5;
+        if (whippedCream) extraCalories += 75;
+        if (milk === 'almendra') extraCalories -= 25;
+        else if (milk === 'avena') extraCalories += 20;
+        else if (milk === 'ninguna') extraCalories -= 70;
+      }
+      currentProductCalories = Math.max(5, baseProductCalories + extraCalories);
+
+      // Dynamically compute allergen disclosures based on selections
+      const allergensSet = new Set<string>(item.allergens || []);
+      if (['calientes', 'frios'].includes(item.category)) {
+        if (milk === 'entera' || milk === 'deslactosada') {
+          allergensSet.add('Lácteos');
+        } else if (milk === 'almendra') {
+          allergensSet.add('Almendras (fruto seco)');
+        } else if (milk === 'avena') {
+          allergensSet.add('Avena');
+        }
+        if (whippedCream) {
+          allergensSet.add('Lácteos (crema batida)');
+        }
+      }
+      currentProductAllergens = Array.from(allergensSet);
+    } else {
+      const combo = selectedProduct as ComboItem;
+      baseProductCalories = combo.calories || 0;
+      currentProductCalories = baseProductCalories;
+      currentProductAllergens = combo.allergens || [];
+    }
+  }
+
   // Cart total calculation
   const cartSubtotal = cartItems.reduce((acc, it) => acc + it.unitPrice * it.quantity, 0);
+  const cartTotalCalories = cartItems.reduce(
+    (acc, it) => acc + (it.calories ? it.calories * it.quantity : 0),
+    0
+  );
   const packagingCost = orderType === 'pickup' ? 5 : orderType === 'domicilio' ? 20 : 0;
 
   // Base total for entire order:
@@ -130,6 +179,8 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
       quantity: 1,
       image: isMenuItem ? (selectedProduct as MenuItem).image : undefined,
       isCombo: !isMenuItem,
+      calories: currentProductCalories > 0 ? currentProductCalories : undefined,
+      allergens: currentProductAllergens.length > 0 ? currentProductAllergens : undefined,
     };
 
     onAddToCart(newItem);
@@ -387,6 +438,68 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
                 </div>
               )}
 
+              {/* Nutritional Information (Calories & Allergens) */}
+              {(baseProductCalories > 0 || currentProductAllergens.length > 0) && (
+                <div
+                  className="bg-[#F4ECE1]/70 rounded-xl p-3 border border-[#EFE7DE] text-xs space-y-2"
+                  id="drawer-nutritional-info"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-ink-secondary flex items-center gap-1.5">
+                      <Flame className="w-3.5 h-3.5 text-[#B85D36]" aria-hidden="true" />
+                      <span>Información Nutricional</span>
+                    </span>
+                    {currentProductCalories > 0 && (
+                      <span className="font-sans tabular-nums font-bold text-[#3D2314] text-xs">
+                        ~{currentProductCalories}{' '}
+                        <span className="font-normal text-[11px] text-ink-secondary">kcal</span>
+                        {isMenuItem && (selectedProduct as MenuItem).priceLarge && (
+                          <span className="ml-1 text-[10px] text-ink-secondary font-normal">
+                            ({size === 'small' ? 'Chico' : 'Grande'})
+                          </span>
+                        )}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Dynamic nutritional notes if customized */}
+                  {isMenuItem && ['calientes', 'frios'].includes((selectedProduct as MenuItem).category) && (
+                    <div className="text-[11px] text-ink-secondary flex flex-wrap gap-x-2 gap-y-0.5">
+                      <span>Base: ~{baseProductCalories} kcal</span>
+                      {milk !== 'entera' && (
+                        <span>
+                          · Leche {milk} (
+                          {milk === 'almendra'
+                            ? '-25 kcal'
+                            : milk === 'avena'
+                            ? '+20 kcal'
+                            : milk === 'ninguna'
+                            ? '-70 kcal'
+                            : 'igual'}
+                          )
+                        </span>
+                      )}
+                      {extraShot && <span>· +Espresso (+5 kcal)</span>}
+                      {whippedCream && <span>· +Crema (+75 kcal)</span>}
+                    </div>
+                  )}
+
+                  {/* Allergens notice */}
+                  <div className="flex items-start gap-1.5 pt-1 border-t border-[#EFE7DE] text-[11px]">
+                    <span className="font-semibold text-[#3D2314] shrink-0">Alérgenos:</span>
+                    {currentProductAllergens.length > 0 ? (
+                      <span className="text-ink-secondary">
+                        {currentProductAllergens.join(', ')}
+                      </span>
+                    ) : (
+                      <span className="text-[#3E5A38] font-medium">
+                        Sin alérgenos comunes declarados
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {/* Add To Cart CTA Button */}
               <button
                 type="button"
@@ -447,6 +560,14 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
                         {item.extraShot ? ' • +Shot' : ''}
                         {item.whippedCream ? ' • +Crema' : ''}
                       </p>
+                      {/* Calories & Allergens in Cart */}
+                      {(item.calories || (item.allergens && item.allergens.length > 0)) && (
+                        <p className="text-[11px] text-ink-secondary mt-0.5 truncate">
+                          {item.calories ? `~${item.calories} kcal/ud.` : ''}
+                          {item.calories && item.allergens && item.allergens.length > 0 ? ' · ' : ''}
+                          {item.allergens && item.allergens.length > 0 ? `Contiene: ${item.allergens.join(', ')}` : ''}
+                        </p>
+                      )}
                       <p className="text-xs font-serif font-bold text-[#B85D36] mt-0.5">
                         ${(item.unitPrice * item.quantity).toFixed(2)} MXN
                       </p>
@@ -499,6 +620,18 @@ export const OrderDrawer: React.FC<OrderDrawerProps> = ({
                   </div>
                 ))}
               </div>
+
+              {cartTotalCalories > 0 && (
+                <div className="flex items-center justify-between px-1 text-[11px] text-ink-secondary pt-0.5">
+                  <span className="flex items-center gap-1.5">
+                    <Flame className="w-3.5 h-3.5 text-[#B85D36]" aria-hidden="true" />
+                    <span>Energía estimada total del pedido:</span>
+                  </span>
+                  <span className="font-sans tabular-nums font-semibold text-[#3D2314]">
+                    ~{cartTotalCalories} kcal
+                  </span>
+                </div>
+              )}
             </div>
           ) : !selectedProduct ? (
             <div className="text-center py-8 px-4 bg-[#FBF7F1] rounded-xl border border-dashed border-[#EFE7DE] space-y-3">
