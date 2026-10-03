@@ -14,6 +14,9 @@ export interface MenuItem {
   image: string;
   isHouseSpecial?: boolean;
   preparationTime?: string;
+  calories?: number;
+  caloriesLarge?: number;
+  allergens?: string[];
 }
 
 export interface ComboItem {
@@ -24,6 +27,8 @@ export interface ComboItem {
   description: string;
   price: number;
   isPopular?: boolean;
+  calories?: number;
+  allergens?: string[];
 }
 
 export type MilkOption = 'entera' | 'deslactosada' | 'almendra' | 'avena' | 'ninguna';
@@ -56,4 +61,6 @@ export interface CartItem {
   quantity: number;
   image?: string;
   isCombo?: boolean;
+  calories?: number;
+  allergens?: string[];
 }

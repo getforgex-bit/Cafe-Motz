@@ -112,6 +112,8 @@ export default function App() {
       unitPrice: item.priceSmall,
       quantity: 1,
       image: item.image,
+      calories: item.calories,
+      allergens: item.allergens,
     };
     handleAddToCart(newItem);
   };
@@ -124,6 +126,8 @@ export default function App() {
       unitPrice: combo.price,
       quantity: 1,
       isCombo: true,
+      calories: combo.calories,
+      allergens: combo.allergens,
     };
     handleAddToCart(newItem);
   };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, ShoppingBag, PackageCheck, Plus } from 'lucide-react';
+import { Sparkles, ShoppingBag, PackageCheck, Plus, Flame } from 'lucide-react';
 import { COMBOS } from '../data/coffeeData';
 import { ComboItem } from '../types';
 
@@ -84,6 +84,22 @@ export const CombosSection: React.FC<CombosSectionProps> = ({ onSelectCombo, onQ
                   <p className="mt-3 text-sm text-ink-secondary leading-relaxed max-w-[44ch]">
                     {featured.description}
                   </p>
+                  {(featured.calories || (featured.allergens && featured.allergens.length > 0)) && (
+                    <div className="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-ink-secondary">
+                      {featured.calories && (
+                        <span className="inline-flex items-center gap-1 font-sans tabular-nums font-medium text-[#3D2314]">
+                          <Flame className="w-3.5 h-3.5 text-[#B85D36]" aria-hidden="true" />
+                          <span>~{featured.calories} kcal</span>
+                        </span>
+                      )}
+                      {featured.calories && featured.allergens && featured.allergens.length > 0 && (
+                        <span aria-hidden="true" className="text-[#D9CBBB]">·</span>
+                      )}
+                      {featured.allergens && featured.allergens.length > 0 && (
+                        <span>Alérgenos: {featured.allergens.join(', ')}</span>
+                      )}
+                    </div>
+                  )}
                 </div>
                 <p className="sm:text-right">
                   <span className="block text-[10px] uppercase tracking-[0.18em] font-bold text-ink-secondary">
@@ -124,6 +140,22 @@ export const CombosSection: React.FC<CombosSectionProps> = ({ onSelectCombo, onQ
               <p className="mt-3 text-sm text-ink-secondary leading-relaxed max-w-[52ch]">
                 {combo.description}
               </p>
+              {(combo.calories || (combo.allergens && combo.allergens.length > 0)) && (
+                <div className="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-ink-secondary">
+                  {combo.calories && (
+                    <span className="inline-flex items-center gap-1 font-sans tabular-nums font-medium text-[#3D2314]">
+                      <Flame className="w-3.5 h-3.5 text-[#B85D36]" aria-hidden="true" />
+                      <span>~{combo.calories} kcal</span>
+                    </span>
+                  )}
+                  {combo.calories && combo.allergens && combo.allergens.length > 0 && (
+                    <span aria-hidden="true" className="text-[#C9B8A6]">·</span>
+                  )}
+                  {combo.allergens && combo.allergens.length > 0 && (
+                    <span>Alérgenos: {combo.allergens.join(', ')}</span>
+                  )}
+                </div>
+              )}
               <div className="mt-5">
                 <ComboActions combo={combo} onSelectCombo={onSelectCombo} onQuickAddCombo={onQuickAddCombo} />
               </div>
