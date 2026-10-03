@@ -33,16 +33,7 @@ También puedes conectar este repositorio en **Workers & Pages → Create → Im
 - Build command: `npm run build`
 - Deploy command: `npx wrangler deploy`
 
-### Opción B: Cloudflare Pages
-
-En **Workers & Pages → Create → Pages → Connect to Git**, selecciona este repositorio y usa:
-
-- Framework preset: `None` (o `Vite`)
-- Build command: `npm run build`
-- Build output directory: `dist`
-- Variable de entorno (opcional): `NODE_VERSION=22`
-
-Pages sirve el sitio como SPA automáticamente y respeta `public/_headers`.
+Queda en `https://motz-cafe.<tu-cuenta>.workers.dev`. Usa Workers y no Pages: en la misma cuenta que Scan-bar, la página lo encuentra sola y Scan-bar sabe a qué URL mandar sus códigos. Pasos de todo el sistema: `docs/DESPLIEGUE.md` en el repositorio Scan-bar.
 
 ### Límite de tamaño de archivos
 
@@ -52,9 +43,9 @@ Cloudflare limita cada asset estático a 25 MiB. `public/videos/sierra-verde-mes
 
 Scan-bar es la base de datos de productos y códigos de barras de los negocios (`src/lib/scanbar.ts`):
 
-- El menú de `src/data/coffeeData.ts` se registra solo en Scan-bar (`npm run sync:repos` allá): cada tamaño es un producto con su código (`americano-ch`, `americano-gde`), y la leche y los extras de `MODIFICADORES` también.
+- El menú de `src/data/coffeeData.ts` se registra solo en Scan-bar (Scan-bar revisa este repositorio cada 10 minutos; `npm run sync:repos` allá lo fuerza): cada tamaño es un producto con su código (`americano-ch`, `americano-gde`), y la leche y los extras de `MODIFICADORES` también.
 - **Cada bebida configurada** (tamaño + leche + extras) recibe su código al agregarse al pedido: se ve en el pedido con su código de barras y viaja en el mensaje de WhatsApp para cobrarla en caja escaneándolo.
 - Los productos agregados desde Scan-bar (*Administración → Productos y etiquetas*) aparecen en el menú: categoría = pestaña (`calientes`, `frios`, `comida`, `postres`), hasta dos variantes (chico, grande).
-- Activar: `VITE_SCANBAR_URL=https://URL-DE-SCAN-BAR` al compilar (en Cloudflare, variable de build). Sin ella, el sitio funciona igual que siempre.
+- Conexión: automática si la página vive en `motz-cafe.<tu-cuenta>.workers.dev` (usa `scan-bar.<tu-cuenta>.workers.dev`). En otro dominio: `VITE_SCANBAR_URL=https://URL-DE-SCAN-BAR` al compilar (en Cloudflare, variable de build); `VITE_SCANBAR_URL=off` la apaga.
 - Probar en local: Scan-bar en otro puerto (`PORT=3001 npm start` allá), `npm run dev` aquí y abrir `http://localhost:3000/?scanbar=http://localhost:3001` (solo acepta localhost).
 - Contrato y diseño completo: `docs/INTEGRACION-WEBS.md` en el repositorio Scan-bar.
